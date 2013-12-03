@@ -52,7 +52,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\TidyManaged.xml</DocumentationFile>
-    <GenerateDocumentation>true</GenerateDocumentation>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
@@ -99,11 +98,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild">
+		<Copy SourceFiles="libs/libtidy.dll" DestinationFolder="$(OutputPath)" Condition="'$(OS)'=='Windows_NT'"/>
+		<Copy SourceFiles="libs/libtidy-html5.so" DestinationFolder="$(OutputPath)" Condition="'$(OS)'!='Windows_NT'"/>
+  </Target>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
 </Project>

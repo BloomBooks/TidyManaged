@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="all" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+	<Target Name="all" DependsOnTargets="TidyManaged"/>
+
+	<Target Name="TidyManaged" DependsOnTargets="libtidy">
+		<MSBuild Projects="TidyManaged-VS2010.sln"/>
+	</Target>
+
+	<Target Name="libtidy" DependsOnTargets="libtidy-win;libtidy-linux"/>
+
+	<Target Name="libtidy-win" Condition="'$(OS)'=='Windows_NT'">
+		<MSBuild Projects="tidy-html5/build/msvc2010/tidydll.vcxproj" Properties="Configuration=Release"/>
+		<Copy SourceFiles="tidy-html5/build/msvc2010/Releasetidydll/libtidy.dll" DestinationFolder="libs"/>
+	</Target>
+
+	<Target Name="libtidy-linux" Condition="'$(OS)'!='Windows_NT'">
+		<Exec Command="sh build/gnuauto/setup.sh &amp;&amp; ./configure --prefix=$(MSBuildProjectDirectory)/libs &amp;&amp; make"
+			WorkingDirectory="tidy-html5"/>
+		<Copy SourceFiles="tidy-html5/src/.libs/libtidy.so" DestinationFiles="libs/libtidy-html5.so"/>
+	</Target>
+</Project>
