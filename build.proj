@@ -4,7 +4,7 @@
 	<Target Name="all" DependsOnTargets="TidyManaged"/>
 
 	<Target Name="TidyManaged" DependsOnTargets="libtidy">
-		<MSBuild Projects="TidyManaged-VS2010.sln"/>
+		<MSBuild Projects="TidyManaged.csproj"/>
 	</Target>
 
 	<Target Name="libtidy" DependsOnTargets="libtidy-win;libtidy-linux"/>
