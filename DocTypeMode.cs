@@ -29,28 +29,33 @@ namespace TidyManaged
 	public enum DocTypeMode
 	{
 		/// <summary>
+		/// &lt;!DOCTYPE html&gt;
+		/// </summary>
+		Html5 = 0,
+
+		/// <summary>
 		/// Omit DOCTYPE altogether.
 		/// </summary>
-		Omit,
+		Omit = 1,
 
 		/// <summary>
 		/// Keep DOCTYPE in input.  Set version to content.
 		/// </summary>
-		Auto,
+		Auto = 2,
 
 		/// <summary>
 		/// Convert document to strict content model.
 		/// </summary>
-		Strict,
+		Strict = 3,
 
 		/// <summary>
 		/// Convert document to transitional content model.
 		/// </summary>
-		Loose,
+		Loose = 4,
 
 		/// <summary>
 		/// User-specified doctype.
 		/// </summary>
-		User
+		User = 5
 	}
 }

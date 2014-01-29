@@ -31,16 +31,16 @@ namespace TidyManaged
 		/// <summary>
 		/// LF (used by Mac OS X, Unix, Linux).
 		/// </summary>
-		Linefeed,
+		Linefeed = 0,
 
 		/// <summary>
 		/// CRLF (used by Microsoft Windows, DOS etc).
 		/// </summary>
-		CarriageReturnLinefeed,
+		CarriageReturnLinefeed = 1,
 
 		/// <summary>
 		/// CR (used by Mac OS 9 and earlier).
 		/// </summary>
-		CarriageReturn
+		CarriageReturn = 2
 	}
 }
