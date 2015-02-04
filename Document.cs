@@ -22,9 +22,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,15 +39,15 @@ namespace TidyManaged
 
 		Document()
 		{
-			this.handle = PInvoke.tidyCreate();
-			this.disposed = false;
+			handle = PInvoke.tidyCreate();
+			disposed = false;
 		}
 
 		Document(string htmlString)
 			: this()
 		{
 			this.htmlString = htmlString;
-			this.fromString = true;
+			fromString = true;
 		}
 
 
@@ -65,8 +63,8 @@ namespace TidyManaged
 
 		IntPtr handle;
 		Stream stream;
-		string htmlString;
-		bool fromString;
+		readonly string htmlString;
+		readonly bool fromString;
 		bool disposed;
 		bool cleaned;
 
@@ -74,34 +72,66 @@ namespace TidyManaged
 
 		#region Properties
 
-		DateTime? _ReleaseDate;
-		static readonly object releaseDateLock = new object();
+		private int _majorVersion;
+		private int _minorVersion;
+		private int _pointVersion;
+
 		/// <summary>
-		/// Gets the release date of the underlying Tidy library.
+		/// Returns the major version of libtidy.dll
 		/// </summary>
-		public DateTime ReleaseDate
+		public int MajorVersion
 		{
 			get
 			{
-				lock (releaseDateLock)
-				{
-					if (!_ReleaseDate.HasValue)
-					{
-						DateTime val = DateTime.MinValue;
-						string release = Marshal.PtrToStringAnsi(PInvoke.tidyReleaseDate());
-						if (release != null)
-						{
-							string[] tokens = release.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-							if (tokens.Length >= 3)
-							{
-								DateTime.TryParseExact(tokens[0] + " " + tokens[1] + " " + tokens[2], "d MMMM yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out val);
-							}
-						}
-						_ReleaseDate = val;
-					}
-					return _ReleaseDate.Value;
-				}
+				if (_majorVersion != 0) return _majorVersion;
+
+				GetLibraryVersion();
+				return _majorVersion;
 			}
+		}
+
+		/// <summary>
+		/// Returns the minor version of libtidy.dll
+		/// </summary>
+		public int MinorVersion
+		{
+			get
+			{
+				if (_majorVersion != 0) return _minorVersion;
+
+				GetLibraryVersion();
+				return _minorVersion;
+			}
+		}
+
+		/// <summary>
+		/// Returns the point version of libtidy.dll
+		/// </summary>
+		public int PointVersion
+		{
+			get
+			{
+				if (_majorVersion != 0) return _pointVersion;
+
+				GetLibraryVersion();
+				return _pointVersion;
+			}
+		}
+
+		/// <summary>
+		/// Splits the version string into integer parts
+		/// </summary>
+		private void GetLibraryVersion()
+		{
+			var version = Marshal.PtrToStringAnsi(PInvoke.tidyLibraryVersion());
+			if (string.IsNullOrEmpty(version)) return;
+
+			var versionParts = version.Split(new[] {'.'});
+			if (versionParts.Length <= 2) return;
+
+			_majorVersion = int.Parse(versionParts[0]);
+			_minorVersion = int.Parse(versionParts[1]);
+			_pointVersion = int.Parse(versionParts[2]);
 		}
 
 		#region HTML, XHTML, XML Options
@@ -141,19 +171,11 @@ namespace TidyManaged
 			// Not available before until 18 Jun 2008
 			get
 			{
-				if (this.ReleaseDate < new DateTime(2008, 6, 18))
-				{
-					Trace.WriteLine("AnchorAsName is not supported by your version of tidylib - ignoring.");
-					return true;
-				}
 				return PInvoke.tidyOptGetBool(this.handle, TidyOptionId.TidyAnchorAsName);
 			}
 			set
 			{
-				if (this.ReleaseDate < new DateTime(2008, 6, 18))
-					Trace.WriteLine("AnchorAsName is not supported by your version of tidylib - ignoring.");
-				else
-					PInvoke.tidyOptSetBool(this.handle, TidyOptionId.TidyAnchorAsName, value);
+				PInvoke.tidyOptSetBool(this.handle, TidyOptionId.TidyAnchorAsName, value);
 			}
 		}
 
@@ -395,19 +417,11 @@ namespace TidyManaged
 			// Not available before until 13 Aug 2007
 			get
 			{
-				if (this.ReleaseDate < new DateTime(2007, 8, 13))
-				{
-					Trace.WriteLine("MergeSpans is not supported by your version of tidylib - ignoring.");
-					return AutoBool.No;
-				}
 				return (AutoBool) PInvoke.tidyOptGetInt(this.handle, TidyOptionId.TidyMergeSpans);
 			}
 			set
 			{
-				if (this.ReleaseDate < new DateTime(2007, 8, 13))
-					Trace.WriteLine("MergeSpans is not supported by your version of tidylib - ignoring.");
-				else
-					PInvoke.tidyOptSetInt(this.handle, TidyOptionId.TidyMergeSpans, (uint) value);
+				PInvoke.tidyOptSetInt(this.handle, TidyOptionId.TidyMergeSpans, (uint) value);
 			}
 		}
 
@@ -556,17 +570,11 @@ namespace TidyManaged
 			// This option was changed from a Bool to an AutoBool on 24 May 2007.
 			get
 			{
-				if (this.ReleaseDate < new DateTime(2007, 5, 24))
-					return (PInvoke.tidyOptGetBool(this.handle, TidyOptionId.TidyBodyOnly) ? AutoBool.Yes : AutoBool.No);
-				else
-					return (AutoBool) PInvoke.tidyOptGetInt(this.handle, TidyOptionId.TidyBodyOnly);
+				return (AutoBool) PInvoke.tidyOptGetInt(this.handle, TidyOptionId.TidyBodyOnly);
 			}
 			set
 			{
-				if (this.ReleaseDate < new DateTime(2007, 5, 24))
-					PInvoke.tidyOptSetBool(this.handle, TidyOptionId.TidyBodyOnly, (value == AutoBool.Yes));
-				else
-					PInvoke.tidyOptSetInt(this.handle, TidyOptionId.TidyBodyOnly, (uint) value);
+				PInvoke.tidyOptSetInt(this.handle, TidyOptionId.TidyBodyOnly, (uint) value);
 			}
 		}
 
@@ -700,19 +708,11 @@ namespace TidyManaged
 			// Not available before until 6 Jun 2007
 			get
 			{
-				if (this.ReleaseDate < new DateTime(2007, 6, 12))
-				{
-					Trace.WriteLine("AttributeSortType is not supported by your version of tidylib - ignoring.");
-					return SortStrategy.None;
-				}
 				return (SortStrategy) PInvoke.tidyOptGetInt(this.handle, TidyOptionId.TidySortAttributes);
 			}
 			set
 			{
-				if (this.ReleaseDate < new DateTime(2007, 6, 12))
-					Trace.WriteLine("AttributeSortType is not supported by your version of tidylib - ignoring.");
-				else
-					PInvoke.tidyOptSetInt(this.handle, TidyOptionId.TidySortAttributes, (uint) value);
+				PInvoke.tidyOptSetInt(this.handle, TidyOptionId.TidySortAttributes, (uint) value);
 			}
 		}
 
@@ -945,13 +945,13 @@ namespace TidyManaged
         /// <returns>A log of the errors encountered during the CleanAndRepair operation.</returns>
 		public string CleanAndRepair()
 		{
-            using (Stream stream = new MemoryStream())
+            using (Stream memStream = new MemoryStream())
             {
-                CleanAndRepair(stream);
-                stream.Seek(0, SeekOrigin.Begin);
-                using (StreamReader reader = new StreamReader(stream))
+                CleanAndRepair(memStream);
+                memStream.Seek(0, SeekOrigin.Begin);
+                using (StreamReader reader = new StreamReader(memStream))
                 {
-                    return reader.ReadToEnd();
+	                return reader.ReadToEnd();
                 }
             }
 		}
@@ -969,10 +969,11 @@ namespace TidyManaged
             PInvoke.tidySetErrorSink(this.handle, ref sink.TidyOutputSink);
             if (fromString)
             {
-                EncodingType tempEnc = this.InputCharacterEncoding;
-                this.InputCharacterEncoding = EncodingType.Utf8;
-                PInvoke.tidyParseString(this.handle, this.htmlString);
-                this.InputCharacterEncoding = tempEnc;
+	            using (var memStream = new MemoryStream(Encoding.UTF8.GetBytes(htmlString)))
+	            {
+					InputSource input = new InputSource(memStream);
+					PInvoke.tidyParseSource(handle, ref input.TidyInputSource);
+	            }
             }
             else
             {

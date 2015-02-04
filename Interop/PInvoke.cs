@@ -38,6 +38,9 @@ namespace TidyManaged.Interop
 		internal static extern IntPtr tidyReleaseDate();
 
 		[DllImport("libtidy.dll")]
+		internal static extern IntPtr tidyLibraryVersion();
+
+		[DllImport("libtidy.dll")]
 		internal static extern IntPtr tidyOptGetValue(IntPtr tdoc, TidyOptionId optId);
 
 		[DllImport("libtidy.dll")]
