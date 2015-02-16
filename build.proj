@@ -10,8 +10,9 @@
 	<Target Name="libtidy" DependsOnTargets="libtidy-win;libtidy-linux"/>
 
 	<Target Name="libtidy-win" Condition="'$(OS)'=='Windows_NT'">
-		<MSBuild Projects="tidy-html5/build/msvc2010/tidydll.vcxproj" Properties="Configuration=Release"/>
-		<Copy SourceFiles="tidy-html5/build/msvc2010/Releasetidydll/libtidy.dll" DestinationFolder="libs"/>
+		<Exec Command="cmake ../.. -DBUILD_SHARED_LIB=TRUE" WorkingDirectory="tidy-html5/build/cmake"/>
+		<Exec Command="cmake --build . --config Release" WorkingDirectory="tidy-html5/build/cmake"/>
+		<Copy SourceFiles="tidy-html5/build/cmake/Release/tidy5.dll" DestinationFiles="libs/libtidy.dll"/>
 	</Target>
 
 	<Target Name="libtidy-linux" Condition="'$(OS)'!='Windows_NT'">
