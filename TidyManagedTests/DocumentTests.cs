@@ -80,14 +80,5 @@ namespace TidyManagedTests
 				}
 			}
 		}
-
-		[Test]
-		public void Get_Tidy_Version()
-		{
-			using (var tidy = Document.FromString("<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body>test</body></html>"))
-			{
-				Assert.Greater(tidy.MajorVersion, 3);
-			}
-		}
 	}
 }

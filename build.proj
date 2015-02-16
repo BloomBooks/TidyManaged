@@ -16,8 +16,8 @@
 	</Target>
 
 	<Target Name="libtidy-linux" Condition="'$(OS)'!='Windows_NT'">
-		<Exec Command="sh build/gnuauto/setup.sh &amp;&amp; ./configure --prefix=$(MSBuildProjectDirectory)/libs &amp;&amp; make"
-			WorkingDirectory="tidy-html5"/>
-		<Copy SourceFiles="tidy-html5/src/.libs/libtidy.so" DestinationFiles="libs/libtidy-html5.so"/>
+		<Exec Command="cmake ../.. -DBUILD_SHARED_LIB=TRUE" WorkingDirectory="tidy-html5/build/cmake"/>
+		<Exec Command="make" WorkingDirectory="tidy-html5/build/cmake"/>
+		<Copy SourceFiles="tidy-html5/build/cmake/libtidy5.so" DestinationFiles="libs/libtidy5.so"/>
 	</Target>
 </Project>

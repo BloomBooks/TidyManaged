@@ -22,7 +22,6 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -71,68 +70,6 @@ namespace TidyManaged
 		#endregion
 
 		#region Properties
-
-		private int _majorVersion;
-		private int _minorVersion;
-		private int _pointVersion;
-
-		/// <summary>
-		/// Returns the major version of libtidy.dll
-		/// </summary>
-		public int MajorVersion
-		{
-			get
-			{
-				if (_majorVersion != 0) return _majorVersion;
-
-				GetLibraryVersion();
-				return _majorVersion;
-			}
-		}
-
-		/// <summary>
-		/// Returns the minor version of libtidy.dll
-		/// </summary>
-		public int MinorVersion
-		{
-			get
-			{
-				if (_majorVersion != 0) return _minorVersion;
-
-				GetLibraryVersion();
-				return _minorVersion;
-			}
-		}
-
-		/// <summary>
-		/// Returns the point version of libtidy.dll
-		/// </summary>
-		public int PointVersion
-		{
-			get
-			{
-				if (_majorVersion != 0) return _pointVersion;
-
-				GetLibraryVersion();
-				return _pointVersion;
-			}
-		}
-
-		/// <summary>
-		/// Splits the version string into integer parts
-		/// </summary>
-		private void GetLibraryVersion()
-		{
-			var version = Marshal.PtrToStringAnsi(PInvoke.tidyLibraryVersion());
-			if (string.IsNullOrEmpty(version)) return;
-
-			var versionParts = version.Split(new[] {'.'});
-			if (versionParts.Length <= 2) return;
-
-			_majorVersion = int.Parse(versionParts[0]);
-			_minorVersion = int.Parse(versionParts[1]);
-			_pointVersion = int.Parse(versionParts[2]);
-		}
 
 		#region HTML, XHTML, XML Options
 
