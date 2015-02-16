@@ -1,3 +1,4 @@
 [submodule "tidy-html5"]
 	path = tidy-html5
-	url = https://github.com/ermshiperete/tidy-html5.git
+	url = https://github.com/BloomBooks/tidy-html5.git
+	branch = develop-500
