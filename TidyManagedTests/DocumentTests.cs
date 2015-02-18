@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
 using NUnit.Framework;
 using Palaso.IO;
@@ -17,7 +14,7 @@ namespace TidyManagedTests
 		{
 			// ŋ --> ?
 			// β (03B2) --> &#65533;
-			using (var tidy = TidyManaged.Document.FromString("<!DOCTYPE html><html><head> <meta charset='UTF-8'></head><body>ŋ β</body></html>"))
+			using (var tidy = Document.FromString("<!DOCTYPE html><html><head> <meta charset='UTF-8'></head><body>ŋ β</body></html>"))
 			{
 				tidy.InputCharacterEncoding = EncodingType.Utf8;
 				tidy.OutputCharacterEncoding = EncodingType.Utf8;
@@ -31,6 +28,7 @@ namespace TidyManagedTests
 				}
 			}
 		}
+
 		[Test]
 		public void Save_UsingFile_RoundTripsUtf8File()
 		{
@@ -40,10 +38,10 @@ namespace TidyManagedTests
 			{
 				var source = "<!DOCTYPE html><html><head> <meta charset='UTF-8'></head><body>ŋ β</body></html>";
 				File.WriteAllText(input.Path, source, Encoding.UTF8);
-				using (var tidy = TidyManaged.Document.FromFile(input.Path))
+				using (var tidy = Document.FromFile(input.Path))
 				{
 					//tidy.CharacterEncoding = EncodingType.Utf8; 
-					tidy.InputCharacterEncoding = EncodingType.Utf8; ;
+					tidy.InputCharacterEncoding = EncodingType.Utf8;
 					tidy.OutputCharacterEncoding = EncodingType.Utf8;
 					tidy.CleanAndRepair();
 					using (var output = new TempFile())
@@ -55,6 +53,7 @@ namespace TidyManagedTests
 				}
 			}
 		}
+
 		[Test]
 		public void Save_UsingStream_RoundTripsUtf8File()
 		{
@@ -65,10 +64,10 @@ namespace TidyManagedTests
 				var source = "<!DOCTYPE html><html><head> <meta charset='UTF-8'></head><body>ŋ β</body></html>";
 				
 				using(var stream = new MemoryStream(Encoding.UTF8.GetBytes(source)))
-				using (var tidy = TidyManaged.Document.FromStream(stream))
+				using (var tidy = Document.FromStream(stream))
 				{
 					tidy.CharacterEncoding = EncodingType.Utf8; 
-//					tidy.InputCharacterEncoding = EncodingType.Utf8; ;
+//					tidy.InputCharacterEncoding = EncodingType.Utf8;
 //					tidy.OutputCharacterEncoding = EncodingType.Utf8;
 
 					tidy.CleanAndRepair();

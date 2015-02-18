@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TidyManaged</RootNamespace>
     <AssemblyName>TidyManaged</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -32,6 +32,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,6 +53,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\TidyManaged.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SUPPORT_UTF16_ENCODINGS;SUPPORT_ASIAN_ENCODINGS;</DefineConstants>
+    <DocumentationFile>bin\Debug\TidyManaged.XML</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;SUPPORT_UTF16_ENCODINGS;SUPPORT_ASIAN_ENCODINGS;</DefineConstants>
+    <DocumentationFile>bin\Release\TidyManaged.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
@@ -106,8 +126,8 @@
   </Target>
   -->
   <Target Name="AfterBuild">
-		<Copy SourceFiles="libs/libtidy.dll" DestinationFolder="$(OutputPath)" Condition="'$(OS)'=='Windows_NT'"/>
-		<Copy SourceFiles="libs/libtidy-html5.so" DestinationFolder="$(OutputPath)" Condition="'$(OS)'!='Windows_NT'"/>
+    <Copy SourceFiles="libs/libtidy.dll" DestinationFolder="$(OutputPath)" Condition="'$(OS)'=='Windows_NT'" />
+    <Copy SourceFiles="libs/libtidy5.so" DestinationFolder="$(OutputPath)" Condition="'$(OS)'!='Windows_NT'" />
   </Target>
   <ItemGroup>
     <None Include="app.config" />
