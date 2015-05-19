@@ -14,6 +14,8 @@ Due to the way options are implemented in the Tidy library only certain versions
 
 If you are building from Git, make sure that you initialize the submodules that are part of this repository by executing: `git submodule update --init --recursive`
 
+You'll also need `cmake` (http://www.cmake.org/download/) installed and in the path. This gets called by build.proj to build libtidy.
+
 Then build libtidy and TidyManaged by running: `msbuild build.proj` (or on Linux: `xbuild build.proj`).
 
 Once you have libtidy in your libs subdirectory you can open the solution in Visual Studio or MonoDevelop and compile there.
