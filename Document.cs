@@ -175,10 +175,19 @@ namespace TidyManaged
 			set { PInvoke.tidyOptSetInt(this.handle, TidyOptionId.TidyDoctypeMode, (uint) value); }
 		}
 
-		/// <summary>
-		/// [drop-empty-paras] Gets or sets whether Tidy should discard empty paragraphs. Defaults to true.
-		/// </summary>
-		public bool DropEmptyParagraphs
+        /// <summary>
+        /// [drop-empty-elems] Gets or sets whether Tidy should discard empty elements. Defaults to true.
+        /// </summary>
+        public bool DropEmptyElements
+        {
+            get { return PInvoke.tidyOptGetBool(this.handle, TidyOptionId.TidyDropEmptyElems); }
+            set { PInvoke.tidyOptSetBool(this.handle, TidyOptionId.TidyDropEmptyElems, value); }
+        }
+
+        /// <summary>
+        /// [drop-empty-paras] Gets or sets whether Tidy should discard empty paragraphs. Defaults to true.
+        /// </summary>
+        public bool DropEmptyParagraphs
 		{
 			get { return PInvoke.tidyOptGetBool(this.handle, TidyOptionId.TidyDropEmptyParas); }
 			set { PInvoke.tidyOptSetBool(this.handle, TidyOptionId.TidyDropEmptyParas, value); }
